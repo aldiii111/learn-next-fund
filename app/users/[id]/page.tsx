@@ -1,9 +1,15 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function UserPage({ params }: { params: Promise<{ id: number }> }) {
   const { id } = await params;
 
   const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+
+  if(!res.ok) {
+    notFound()
+  }
+
   const user = await res.json();
 
   return (
