@@ -1,7 +1,27 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-export default async function UserPage({ params }: { params: Promise<{ id: number }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+
+  const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
+
+  if (!res.ok) {
+    return {
+      title: "User tidak ditemukan | NextFund",
+    }
+  }
+
+  const user = await res.json();
+
+  return {
+    title: user.name,
+    description: `Profil dan informasi dari ${user.name} yang bekerja di ${user.company.name}`,
+  }
+}
+
+export default async function UserPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const res = await fetch(`https://jsonplaceholder.typicode.com/users/${id}`);
